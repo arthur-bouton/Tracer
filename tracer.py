@@ -187,7 +187,7 @@ class Tracer :
 		self.parser.add_argument( '-T', '--titles', type=self._str_list, help="set the titles for each subplots, separated by commas" )
 		self.parser.add_argument( '-X', '--latex', action='store_true', help="use LaTeX for the texts" )
 		self.parser.add_argument( '-P', '--plain', action='store_true', help="set plain colors for the figure" )
-		self.parser.add_argument( '-S', '--transparent', action='store_true', help="set the face transparent" )
+		self.parser.add_argument( '-S', '--transparent', action='store_true', help="set the margins transparent" )
 		self.parser.add_argument( '-Q', '--Qt4', action='store_true', help="use Qt4 as backend" )
 		self.parser.add_argument( '--ylog', type=self._indexes, nargs='?', const=[0], help="declare y axes where to use a log scale, separated by commas or every one without specifying" )
 		self.parser.add_argument( '--xlog', action='store_true', help="use a log scale for the x axis, which implies to take the first series as abscissa" )
