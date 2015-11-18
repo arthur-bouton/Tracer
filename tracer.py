@@ -501,6 +501,23 @@ class Tracer :
 		self.axes[i].xaxis.label.set_color( self.labels_color )
 
 
+	def _zero_sight( self ) :
+
+		n = -1 if self.args.abscissa else 0
+		for i, ax in enumerate( self.axes ) :
+			if self.args.zero is not None and ( self.args.zero[0] == 0 or i + 1 in self.args.zero ) :
+				ax.relim()
+				n += len( self._series[i] )
+			else :
+				first = True
+				for serie in self._series[i] :
+					if n >= 0 :
+						ax.dataLim.update_from_path( self._lines[n].get_path(), first )
+						first = False
+					n += 1
+			ax.autoscale( True )
+
+
 	def _plot_data( self ) :
 
 		if self.args.titles is None :
@@ -553,6 +570,8 @@ class Tracer :
 			else :
 				self.axes[i].xaxis.label.set_color( self.labels_color )
 
+			self._zero_sight()
+
 
 	def _relim_data( self ) :
 
@@ -584,19 +603,7 @@ class Tracer :
 					self._lines[i].set_xdata( xrange( self._data_count ) )
 					self._lines[i].set_ydata( self._data[i] )
 
-			n = -1 if self.args.abscissa else 0
-			for i, ax in enumerate( self.axes ) :
-				if self.args.zero is not None and ( self.args.zero[0] == 0 or i + 1 in self.args.zero ) :
-					ax.relim()
-					n += len( self._series[i] )
-				else :
-					first = True
-					for serie in self._series[i] :
-						if n >= 0 :
-							ax.dataLim.update_from_path( self._lines[n].get_path(), first )
-							first = False
-						n += 1
-				ax.autoscale( True )
+			self._zero_sight()
 
 			self._new_data = False
 
