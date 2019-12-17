@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2.7
 #-*- coding: utf-8 -*-
 #
 # tracer.py
@@ -377,7 +377,7 @@ class Tracer :
 				self.axes[i].set_title( self.args.titles[i] )
 			self.axes[i].title.set_color( self.title_color )
 
-			self.axes[i].set_axis_bgcolor( self.background_color )
+			self.axes[i].set_facecolor( self.background_color )
 
 			for spine in self.axes[i].spines.values() :
 				spine.set_color( self.axis_color )
@@ -393,11 +393,11 @@ class Tracer :
 				self.axes[i].set_yscale( "log", nonposy='clip' )
 
 			isgrid = False if self.args.nogrid is not None and ( self.args.nogrid[0] == 0 or i + 1 in self.args.nogrid ) else True
-			self.axes[i].grid( color=self.grid_color )
+			self.axes[i].grid( color=self.grid_color, ls='dotted', alpha=0.3 )
 			self.axes[i].grid( isgrid )
-			self.axes[i].abscissa = self.axes[i].axhline( color=self.grid_color, ls='dashed', alpha=0.3, visible=isgrid )
+			self.axes[i].abscissa = self.axes[i].axhline( color=self.grid_color, ls='dashed', alpha=0.2, visible=isgrid )
 
-			self.axes[i].set_color_cycle( self.args.colors )
+			self.axes[i].set_prop_cycle( color=self.args.colors )
 
 		if not self._fromfile and self._series is not None :
 			self._plot_data()
@@ -527,7 +527,7 @@ class Tracer :
 		if self.args.abscissa :
 			for i, subplot in enumerate( self._series ) :
 				if i and not self.args.loop :
-					self.axes[i]._get_lines.color_cycle = self.axes[i-1]._get_lines.color_cycle
+					self.axes[i]._get_lines.prop_cycler = self.axes[i-1]._get_lines.prop_cycler
 				for serie in subplot :
 					if n :
 						self._lines += self.axes[i].plot( self._data[0], self._data[n], ls=self._linestyle( n ) )
@@ -551,7 +551,7 @@ class Tracer :
 		else :
 			for i, subplot in enumerate( self._series ) :
 				if i and not self.args.loop :
-					self.axes[i]._get_lines.color_cycle = self.axes[i-1]._get_lines.color_cycle
+					self.axes[i]._get_lines.prop_cycler = self.axes[i-1]._get_lines.prop_cycler
 				for serie in subplot :
 					self._lines += self.axes[i].plot( self._data[n], ls=self._linestyle( n + 1 ) )
 					if self.args.linewidth is not None and len( self.args.linewidth ) > n :
