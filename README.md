@@ -1,5 +1,9 @@
 # Tracer
-Traceur de courbes basé sur matplotlib
+Traceur de courbes basé sur matplotlib.
+
+Test rapide, dans un terminal :
+
+`$ { while true ; do echo $((RANDOM%21-10)) $((RANDOM%21-10)) ; sleep 0.01 ; done } | ./tracer.py -C1/2 -b200`
 
 
 **Les fichiers :**

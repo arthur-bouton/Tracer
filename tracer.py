@@ -142,7 +142,7 @@ class Tracer :
 
 		You can directly specify a file object to use as input.
 
-		'rate' is the default minimum time in seconds between two refreshes,
+		'rate' is the default minimum time in seconds between two updates,
 		'w' and 'h' are the default size of the window in pixels,
 		'lines_width' is the default width of the lines,
 		'lines_color' is a list of their default colors
@@ -167,7 +167,7 @@ class Tracer :
 		self.parser.add_argument( '-f', '--file', type=argparse.FileType('r+b'), help="read from the file FILE" )
 		self.parser.add_argument( '-o', '--offset', type=self._s_positive_int, help="add a starting offset" )
 		self.parser.add_argument( '-b', '--band', type=self._s_positive_int, help="limit the number of data to display" )
-		self.parser.add_argument( '-r', '--rate', type=float, default=rate, help="set a minimum time in seconds between two refreshes" )
+		self.parser.add_argument( '-r', '--rate', type=float, default=rate, help="set a minimum time in seconds between two updates of the window" )
 		self.parser.add_argument( '-q', '--quiet', action='store_true', help="silence unprocessed lines" )
 		self.parser.add_argument( '-p', '--pass', dest='reprint', action='store_true', help="rewrite the data on standard output" )
 		self.parser.add_argument( '-x', '--x_pos', type=self._percentage, help="position the window in a percentage relative to the width of the screen" )
@@ -179,8 +179,8 @@ class Tracer :
 		self.parser.add_argument( '-t', '--dotted', type=self._indexes, help="declare dotted lines, separated by commas" )
 		self.parser.add_argument( '-m', '--mixed', type=self._indexes, help="declare mixed lines, separated by commas" )
 		self.parser.add_argument( '-w', '--linewidth', type=self._float_list, help="set the linewidths, separated by commas" )
-		self.parser.add_argument( '-z', '--zero', type=self._indexes, nargs='?', const=[0], help="declare subplots where to keep zero in sight, separated by commas or every one without specifying" )
-		self.parser.add_argument( '-g', '--nogrid', type=self._indexes, nargs='?', const=[0], help="declare subplots where not to display the grid, separated by commas or every one without specifying" )
+		self.parser.add_argument( '-z', '--zero', type=self._indexes, nargs='?', const=[0], help="declare subplots where to keep zero in sight, separated by commas or every one when not specified" )
+		self.parser.add_argument( '-g', '--nogrid', type=self._indexes, nargs='?', const=[0], help="declare subplots where not to display the grid, separated by commas or every one when not specified" )
 		self.parser.add_argument( '-L', '--labels', type=self._str_list, default=[], help="set the labels for each series, separated by commas" )
 		self.parser.add_argument( '-A', '--xlabel', type=str, help="set the label for the abscissa" )
 		self.parser.add_argument( '-T', '--titles', type=self._str_list, help="set the titles for each subplots, separated by commas" )
@@ -188,7 +188,7 @@ class Tracer :
 		self.parser.add_argument( '-P', '--plain', action='store_true', help="set plain colors for the figure" )
 		self.parser.add_argument( '-S', '--transparent', action='store_true', help="set the margins transparent" )
 		self.parser.add_argument( '-Q', '--Qt4', action='store_true', help="use Qt4 as backend" )
-		self.parser.add_argument( '--ylog', type=self._indexes, nargs='?', const=[0], help="declare y axes where to use a log scale, separated by commas or every one without specifying" )
+		self.parser.add_argument( '--ylog', type=self._indexes, nargs='?', const=[0], help="declare y axes where to use a log scale, separated by commas or every one when not specified" )
 		self.parser.add_argument( '--xlog', action='store_true', help="use a log scale for the x axis, which implies to take the first series as abscissa" )
 
 
