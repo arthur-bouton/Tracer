@@ -1,5 +1,4 @@
-#!/usr/bin/python
-#-*- coding: utf-8 -*-
+#!/usr/bin/python3
 #
 # tracer-qt4.py
 #
@@ -24,12 +23,10 @@
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar2
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar2
 from tracer import Tracer, import_TracerToolbar
 TracerToolbar = import_TracerToolbar( NavigationToolbar2 )
 import sys
-reload( sys )
-sys.setdefaultencoding( 'utf8' )
 import os
 
 
@@ -82,10 +79,10 @@ class QTracerWindow( QtGui.QMainWindow ) :
 
 	def save_window( self ) :
 
-		filename = QtGui.QFileDialog.getSaveFileName( self, 'File for data saving', os.getcwd(), 'Text files (*.txt)' )
+		filename = QtGui.QFileDialog.getSaveFileName( self, 'File for data saving', os.getcwd(), 'Text or data files (*.txt *.dat)' )
 		if filename :
 			try :
-				return open( filename, 'wb' )
+				return open( filename, 'w' )
 			except IOError as e :
 				QtGui.QMessageBox.critical( self, 'Error', 'Unable to open the file %s :\n%s' % ( filename, e.strerror ) )
 		return None

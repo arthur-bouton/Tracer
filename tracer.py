@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python
 #-*- coding: utf-8 -*-
 #
 # tracer.py
@@ -107,7 +107,6 @@ class Tracer :
 
 
 	def _str_list( self, arg ) :
-		arg = unicode( arg, 'utf8' )
 		return arg.split( ',' )
 
 	
@@ -183,7 +182,7 @@ class Tracer :
 		self.parser.add_argument( '-z', '--zero', type=self._indexes, nargs='?', const=[0], help="declare subplots where to keep zero in sight, separated by commas or every one without specifying" )
 		self.parser.add_argument( '-g', '--nogrid', type=self._indexes, nargs='?', const=[0], help="declare subplots where not to display the grid, separated by commas or every one without specifying" )
 		self.parser.add_argument( '-L', '--labels', type=self._str_list, default=[], help="set the labels for each series, separated by commas" )
-		self.parser.add_argument( '-A', '--xlabel', type=lambda s:unicode(s,'utf8'), help="set the label for the abscissa" )
+		self.parser.add_argument( '-A', '--xlabel', type=str, help="set the label for the abscissa" )
 		self.parser.add_argument( '-T', '--titles', type=self._str_list, help="set the titles for each subplots, separated by commas" )
 		self.parser.add_argument( '-X', '--latex', action='store_true', help="use LaTeX for the texts" )
 		self.parser.add_argument( '-P', '--plain', action='store_true', help="set plain colors for the figure" )
@@ -230,7 +229,7 @@ class Tracer :
 			fl = fcntl.fcntl( self.input, fcntl.F_GETFL )
 			fcntl.fcntl( self.input, fcntl.F_SETFL, fl | os.O_NONBLOCK )
 
-		sys.stdout = os.fdopen( sys.stdout.fileno(), 'w', 0 )
+		sys.stdout = os.fdopen( sys.stdout.fileno(), 'w' )
 
 		if self.args.columns is not None :
 			self._series = self.args.columns
@@ -239,7 +238,7 @@ class Tracer :
 			for subplot in self._series :
 				self._nseries += len( subplot )
 
-			self._data = [ [] for i in xrange( self._nseries ) ]
+			self._data = [ [] for i in range( self._nseries ) ]
 
 		else :
 			self._series = None
@@ -352,7 +351,6 @@ class Tracer :
 
 		if self.args.latex :
 			pyplot.rcParams['text.usetex']=True
-			pyplot.rcParams['text.latex.unicode']=True
 
 		if self._series is not None :
 			self.fig, self.axes = pyplot.subplots( self._nsubplots, sharex=True )
@@ -371,7 +369,7 @@ class Tracer :
 		if self.args.titles is None :
 			self.axes[0].set_title( '[ 0 ]' )
 
-		for i in xrange( self._nsubplots ) :
+		for i in range( self._nsubplots ) :
 
 			if self.args.titles is not None and len( self.args.titles ) > i :
 				self.axes[i].set_title( self.args.titles[i] )
@@ -388,9 +386,9 @@ class Tracer :
 			self.axes[i].yaxis.get_offset_text().set_color( self.ticks_color )
 
 			if self.args.xlog :
-				self.axes[i].set_xscale( "log", nonposx='clip' )
+				self.axes[i].set_xscale( "symlog" )
 			if self.args.ylog is not None and ( self.args.ylog[0] == 0 or i + 1 in self.args.ylog ) :
-				self.axes[i].set_yscale( "log", nonposy='clip' )
+				self.axes[i].set_yscale( "symlog" )
 
 			isgrid = False if self.args.nogrid is not None and ( self.args.nogrid[0] == 0 or i + 1 in self.args.nogrid ) else True
 			self.axes[i].grid( color=self.grid_color, ls='dotted', alpha=0.3 )
@@ -576,7 +574,7 @@ class Tracer :
 	def _relim_data( self ) :
 
 		if self.args.band is not None and self._data_count > self.args.band :
-			for i in xrange( self._nseries ) :
+			for i in range( self._nseries ) :
 				del self._data[i][0:self._data_count-self.args.band]
 
 			self._data_count = self.args.band
@@ -594,13 +592,13 @@ class Tracer :
 
 		if self._new_data :
 			if self.args.abscissa :
-				for i in xrange( 1, self._nseries ) :
+				for i in range( 1, self._nseries ) :
 					self._lines[i-1].set_xdata( self._data[0] )
 					self._lines[i-1].set_ydata( self._data[i] )
 
 			else :
-				for i in xrange( self._nseries ) :
-					self._lines[i].set_xdata( xrange( self._data_count ) )
+				for i in range( self._nseries ) :
+					self._lines[i].set_xdata( range( self._data_count ) )
 					self._lines[i].set_ydata( self._data[i] )
 
 			self._zero_sight()
@@ -611,19 +609,19 @@ class Tracer :
 			self.fig.canvas.toolbar.push_current()
 
 		try :
-			self.fig.canvas.draw()
+			self.fig.canvas.draw_idle()
 		except RuntimeError :
 			pass
 
 
 	def _readline( self ) :
 		line = ''
-		c = os.read( self.input.fileno(), 1 )
+		c = os.read( self.input.fileno(), 1 ).decode( 'utf-8' )
 		if c :
 			while c != '\n' :
 				if not self._poll.poll( self.args.rate*1e3 ) == [] :
 					line += c
-					c = os.read( self.input.fileno(), 1 )
+					c = os.read( self.input.fileno(), 1 ).decode( 'utf-8' )
 				elif self._new_data and not self._paused :
 					self._warning = ''
 					self._top_time = time.time()
@@ -693,15 +691,15 @@ class Tracer :
 
 			line = strline.split()
 			
-			if self.args.offset > 0 :
+			if self.args.offset is not None and self.args.offset > 0 :
 				self.args.offset -= 1
 				if not self.args.quiet :
-					print strline,
+					sys.stdout.write( strline )
 				continue
 
 			if self.args.ncolumns is not None and len( line ) != self.args.ncolumns :
 				if not self.args.quiet :
-					print strline,
+					sys.stdout.write( strline )
 				continue
 			
 			if self._series is None :
@@ -718,7 +716,7 @@ class Tracer :
 				if ( not self.args.abscissa and self._nseries < 1 ) or ( self.args.abscissa and self._nseries < 2 ) :
 					self._series = None
 					if not self.args.quiet :
-						print strline,
+						sys.stdout.write( strline )
 					continue
 
 				self._seriesmax = max( self._series[0] )
@@ -731,7 +729,7 @@ class Tracer :
 
 				if len( line ) < self._seriesmax :
 					if not self.args.quiet :
-						print strline,
+						sys.stdout.write( strline )
 					continue
 
 				try :
@@ -740,8 +738,13 @@ class Tracer :
 							line[serie-1] = float( line[serie-1] )
 				except ValueError :
 					if not self.args.quiet :
-						print strline,
+						sys.stdout.write( strline )
 					continue
+			
+			if self.args.reprint :
+				sys.stdout.write( strline )
+
+			sys.stdout.flush()
 
 
 			# AJOUT DES NOUVELLES DONNÉES :
@@ -754,9 +757,6 @@ class Tracer :
 			
 			self._data_count += 1
 			self._new_data = True
-			
-			if self.args.reprint :
-				print strline,
 
 			if self._fromfile :
 				if self.args.band is not None and self._data_count >= self.args.band :
@@ -772,7 +772,6 @@ class Tracer :
 					self._warning = ''
 				else :
 					self._warning = 'OVERRUN'
-
 
 
 		# FIN DES DONNÉES :
@@ -1132,9 +1131,9 @@ def import_TracerToolbar( NavigationToolbar2 ) :
 					f = self.get_save_file()
 					if hasattr( f, 'write' ) :
 						s = len( data )
-						for i in xrange( n ) :
+						for i in range( n ) :
 							line = ''
-							for j in xrange( s - 1 ) :
+							for j in range( s - 1 ) :
 								line += str( data[j][i] ) + ' '
 							line += str( data[s-1][i] ) + '\n'
 							f.write( line )

@@ -1,5 +1,4 @@
-#!/usr/bin/python
-#-*- coding: utf-8 -*-
+#!/usr/bin/python3
 #
 # tracer-tk.py
 #
@@ -21,13 +20,13 @@
 #    The author of this code can be contacted at arthur.bouton@gadz.org
 #    Any contact about this application is warmly welcomed.
 #
-import Tkinter as tk
-import tkFileDialog
-import tkMessageBox
+import tkinter as tk
+from tkinter import filedialog
+from tkinter import messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg as FigureCanvas
-from matplotlib.backends.backend_tkagg import NavigationToolbar2TkAgg
+from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from tracer import Tracer, import_TracerToolbar
-TracerToolbar = import_TracerToolbar( NavigationToolbar2TkAgg )
+TracerToolbar = import_TracerToolbar( NavigationToolbar2Tk )
 import os
 
 
@@ -61,7 +60,7 @@ class TkTracerWindow() :
 			self.window.quit()
 		self.canvas._tkcanvas.bind( "<Destroy>", destroy )
 
-		self.canvas.show()
+		self.canvas.draw()
 
 
 	def on_key( self, event ) :
@@ -77,12 +76,12 @@ class TkTracerWindow() :
 
 	def save_window( self ) :
 
-		filename = tkFileDialog.asksaveasfilename( title='File for data saving', initialdir=os.getcwd(), defaultextension='*.txt' )
+		filename = filedialog.asksaveasfilename( title='File for data saving', initialdir=os.getcwd() )
 		if filename :
 			try :
-				return open( filename, 'wb' )
+				return open( filename, 'w' )
 			except IOError as e :
-				tkMessageBox.showerror( 'Error', 'Unable to open the file %s :\n%s' % ( filename, e.strerror ) )
+				messagebox.showerror( 'Error', 'Unable to open the file %s :\n%s' % ( filename, e.strerror ) )
 		return None
 
 	
@@ -140,7 +139,7 @@ class TkTracerWindow() :
 						int( popup.band_value )
 					float( popup.rate_value )
 				except ValueError :
-					tkMessageBox.showerror( 'Error', 'Bad entry !' )
+					messagebox.showerror( 'Error', 'Bad entry !' )
 			return popup.accepted, popup.band_value, popup.rate_value
 
 
