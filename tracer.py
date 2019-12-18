@@ -161,6 +161,7 @@ class Tracer :
 		self.lines_color = lines_color
 
 		self.parser = argparse.ArgumentParser()
+		self.parser.add_argument( '--sep', type=str, help="set the delimiter string" )
 		self.parser.add_argument( '-C', '--columns', type=self._columns, help="specify the columns to be processed, separated by commas and the subplots by slashes" )
 		self.parser.add_argument( '-n', '--ncolumns', type=self._s_positive_int, help="process only the lines with NCOLUMNS columns" )
 		self.parser.add_argument( '-a', '--abscissa', action='store_true', help="take the first series as abscissa" )
@@ -689,7 +690,7 @@ class Tracer :
 
 			self._data_mutex.acquire()
 
-			line = strline.split()
+			line = strline.split( self.args.sep )
 			
 			if self.args.offset is not None and self.args.offset > 0 :
 				self.args.offset -= 1
