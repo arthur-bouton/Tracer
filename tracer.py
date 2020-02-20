@@ -51,14 +51,20 @@ class Tracer :
 
 	def _columns( self, arg ) :
 		try :
-			columns = arg.split( '/' )
-			for i, subplot in enumerate( columns ) :
-				columns[i] = subplot.split( ',' )
-				for j, column in enumerate( columns[i] ) :
-					columns[i][j] = int( column )
-					assert columns[i][j] > 0
+			columns = []
+			for subplot in arg.split( '/' ) :
+				columns.append( [] )
+				for column in subplot.split( ',' ) :
+					column_range = column.split( '-' )
+					if len( column_range ) == 2 :
+						column_range = range( int( column_range[0] ), int( column_range[1] ) + 1 )
+						assert column_range
+						columns[-1].extend( column_range )
+					else :
+						columns[-1].append( int( column ) )
+						assert columns[-1][-1] > 0
 		except :
-			raise argparse.ArgumentTypeError( "invalid columns list: '%s': must be integers separeted by commas or slashes" % arg )
+			raise argparse.ArgumentTypeError( "invalid columns list: '%s': must be integers separeted by commas, slashes or a dash to indicate a range" % arg )
 		return columns
 
 
@@ -162,8 +168,8 @@ class Tracer :
 
 		self.parser = argparse.ArgumentParser()
 		self.parser.add_argument( '--sep', type=str, help="set the delimiter string" )
-		self.parser.add_argument( '-C', '--columns', type=self._columns, help="specify the columns to be processed, separated by commas and the subplots by slashes" )
-		self.parser.add_argument( '-n', '--ncolumns', type=self._s_positive_int, help="process only the lines with NCOLUMNS columns" )
+		self.parser.add_argument( '-C', '--columns', type=self._columns, help="specify the columns to be processed, separated by commas (a dash indicates a range) while subplots are separated by slashes" )
+		self.parser.add_argument( '-n', '--ncolumns', type=self._s_positive_int, help="process only the lines with N columns" )
 		self.parser.add_argument( '-a', '--abscissa', action='store_true', help="take the first series as abscissa" )
 		self.parser.add_argument( '-f', '--file', type=argparse.FileType('r'), help="read from the file FILE" )
 		self.parser.add_argument( '-o', '--offset', type=self._s_positive_int, help="add a starting offset" )
