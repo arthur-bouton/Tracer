@@ -165,7 +165,7 @@ class Tracer :
 		self.parser.add_argument( '-C', '--columns', type=self._columns, help="specify the columns to be processed, separated by commas and the subplots by slashes" )
 		self.parser.add_argument( '-n', '--ncolumns', type=self._s_positive_int, help="process only the lines with NCOLUMNS columns" )
 		self.parser.add_argument( '-a', '--abscissa', action='store_true', help="take the first series as abscissa" )
-		self.parser.add_argument( '-f', '--file', type=argparse.FileType('r+b'), help="read from the file FILE" )
+		self.parser.add_argument( '-f', '--file', type=argparse.FileType('r'), help="read from the file FILE" )
 		self.parser.add_argument( '-o', '--offset', type=self._s_positive_int, help="add a starting offset" )
 		self.parser.add_argument( '-b', '--band', type=self._s_positive_int, help="limit the number of data to display" )
 		self.parser.add_argument( '-r', '--rate', type=float, default=rate, help="set a minimum time in seconds between two updates of the window" )
