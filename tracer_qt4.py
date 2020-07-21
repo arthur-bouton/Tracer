@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# tracer-qt4.py
+# tracer_qt4.py
 #
 #    Copyright (C) 2014 Arthur Bouton
 #
@@ -142,7 +142,7 @@ class QTracerWindow( QtGui.QMainWindow ) :
 			return accepted == QtGui.QDialog.Accepted, newband, newrate
 
 
-if __name__ == '__main__' :
+def main() :
 
 	main_tracer = Tracer()
 	main_tracer.run( show=False )
@@ -152,3 +152,7 @@ if __name__ == '__main__' :
 	main_window = QTracerWindow( main_tracer )
 
 	sys.exit( app.exec_() )
+
+
+if __name__ == '__main__' :
+	main()

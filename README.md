@@ -8,14 +8,25 @@
 
 Traceur de courbes basé sur Matplotlib.
 
-Test rapide, dans un terminal :
 
-`$ { while true ; do echo $((RANDOM%21-10)) $((RANDOM%21-10)) ; sleep 0.01 ; done } | ./tracer.py -C1/2 -b200`
+### Installation :
+
+Pour une installation dans l'espace utilisateur, exécutez dans le dossier du dépôt :
+
+`$ pip install . --user`
+
+Pour la version utilisant Qt4, vous aurez également besoin d'installer PyQt4, qui n'est plus disponible sur PyPI, mais peut être installé depuis les dépôts Debian :
+
+`sudo apt-get install python3-pyqt4`
+
+Pour effectuer un test rapide, exécutez dans un terminal bash :
+
+`$ { while true ; do echo $((RANDOM%21-10)) $((RANDOM%21-10)) ; sleep 0.01 ; done } | tracer -C1/2 -b200`
 
 
 ### Les fichiers :
 
-tracer-qt4.py et tracer-tk.py propose respectivement une interface graphique à partir des bibliothèque Qt4 et Tkinter. Ils utilisent tous deux la classe `Tracer` définie dans tracer.py. Ce dernier fichier peut être exécuter directement, dans quel cas l'interface standard de matplotlib sera utilisée et la barre d'outils ne se verra pas agrémenté des boutons "change band/rate", "pause" et "save data". tracer-qt4.py et tracer-tk.py servent d'exemples pour la manière d'intégrer le traceur et sa barre d'outils dans n'importe quelle application.
+tracer_qt4.py et tracer_tk.py propose respectivement une interface graphique à partir des bibliothèque Qt4 et Tkinter. Ils utilisent tous deux la classe `Tracer` définie dans tracer.py. Ce dernier fichier peut être exécuter directement, dans quel cas l'interface standard de matplotlib sera utilisée et la barre d'outils ne se verra pas agrémenté des boutons "change band/rate", "pause" et "save data". tracer_qt4.py et tracer_tk.py servent d'exemples pour la manière d'intégrer le traceur et sa barre d'outils dans n'importe quelle application.
 
 
 ### Le traceur en lui-même :
@@ -40,31 +51,31 @@ Les lignes de texte sont lues en dissociant chaque mot séparé par un ou plusie
 
 ### Quelques exemples d'utilisation :
 
-`$ ./tracer.py`
+`$ tracer`
 
 *Lira tout ce qui vient de l'entrée standard (à utiliser alors avec un tube). La première ligne reçue comprenant au moins une valeur numérique séparée par des espaces déterminera la ou les série(s) à tracer sur un même graphique.*
 
-`$ ./tracer.py -C 2-4,6`
+`$ tracer -C 2-4,6`
 
 *Traitera les lignes où les colonnes 2, 3, 4 et 6 sont des valeurs numériques et tracera les trois séries sur un même graphique.*
 
-`$ ./tracer.py -C 2-4/6`
+`$ tracer -C 2-4/6`
 
 *Tracera les séries issues des colonnes 2 à 4 sur un premier graphique et celle issue de la colonne 6 sur un autre partageant la même abscisse.*
 
-`$ ./tracer.py -C 2,4/6 -a`
+`$ tracer -C 2,4/6 -a`
 
 *Tracera les séries issues des colonnes 4 et 6 sur deux graphiques différents mais tous deux en fonction de la première série spécifiée, c'est-à-dire ici celle issue de la deuxième colonne.*
 
-`$ ./tracer.py -f file.txt -o 1000 -b 200`
+`$ tracer -f file.txt -o 1000 -b 200`
 
 *Trace la ou les série(s) de valeurs numériques contenues dans le fichier file.txt entre la 1000ème et la 1200ème donnée.*
 
-`$ ./tracer.py -f file.txt -n 2 -L '$\alpha$,$\beta$' -T Résultats -P -S`
+`$ tracer -f file.txt -n 2 -L '$\alpha$,$\beta$' -T Résultats -P -S`
 
 *Traite les lignes du fichier file.txt comportant exactement 2 colonnes et légende la première série par la lettre grec alpha et la deuxième par la lettre grec beta. Le graphique est intitulé "Résultats", les couleurs sont claires et les marges transparentes afin que la figure soit propre à l'exportation.*
 
-`$ ./tracer.py -aC1,2 -x25 -s50x100 -p | ./tracer.py -aC3,4 -x75 -s50x100`
+`$ tracer -aC1,2 -x25 -s50x100 -p | tracer -aC3,4 -x75 -s50x100`
 
 *Tracera dans une première fenêtre occupant la moitiée gauche de l'écran la série issue de la deuxième colonne en fonction de celle issue de la première colonne et dans une seconde fenêtre occupant la moitiée droite de l'écran la série issue de la quatrième colonne en fonction de celle issue de la troisième colonne.*
 

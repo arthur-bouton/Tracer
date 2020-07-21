@@ -1153,6 +1153,8 @@ def import_TracerToolbar( NavigationToolbar2 ) :
 	return TracerToolbar
 
 
-if __name__ == '__main__' :
-
+def main() :
 	sys.exit( Tracer().run() )
+
+if __name__ == '__main__' :
+	main()
