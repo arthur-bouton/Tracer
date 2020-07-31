@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
 	name='tracer',
-	version='1.0',
+	version='1.1',
 	description='Real-time versatile plotter based on Matplotlib',
 	license='GPL-2.0',
 	author='Arthur Bouton',

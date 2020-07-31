@@ -55,16 +55,25 @@ class Tracer :
 			for subplot in arg.split( '/' ) :
 				columns.append( [] )
 				for column in subplot.split( ',' ) :
-					column_range = column.split( '-' )
-					if len( column_range ) == 2 :
-						column_range = range( int( column_range[0] ), int( column_range[1] ) + 1 )
-						assert column_range
-						columns[-1].extend( column_range )
+					column_range = column.split( ':' )
+
+					assert len( column_range ) <= 3
+
+					if len( column_range ) == 3 :
+						step = abs( int( column_range[2] ) )
 					else :
-						columns[-1].append( int( column ) )
-						assert columns[-1][-1] > 0
+						step = 1
+
+					if len( column_range ) >= 2 :
+						start = int( column_range[0] )
+						stop  = int( column_range[1] )
+						order = 1 if start <= stop else -1
+						columns[-1].extend( range( start, stop + order, order*step ) )
+					else :
+						columns[-1].append( int( column_range[0] ) )
+
 		except :
-			raise argparse.ArgumentTypeError( "invalid columns list: '%s': must be integers separeted by commas, slashes or a dash to indicate a range" % arg )
+			raise argparse.ArgumentTypeError( "invalid columns list: '%s': must be integers separeted by commas, slashes or colons to indicate a range" % arg )
 		return columns
 
 
@@ -168,7 +177,7 @@ class Tracer :
 
 		self.parser = argparse.ArgumentParser()
 		self.parser.add_argument( '--sep', type=str, help="set the delimiter string" )
-		self.parser.add_argument( '-C', '--columns', type=self._columns, help="specify the columns to be processed, separated by commas (a dash indicates a range) while subplots are separated by slashes" )
+		self.parser.add_argument( '-C', '--columns', type=self._columns, help="specify the columns to be processed, separated by commas (a colon indicates a range and an extra colon specifies a step) while subplots are separated by slashes" )
 		self.parser.add_argument( '-n', '--ncolumns', type=self._s_positive_int, help="process only the lines with N columns" )
 		self.parser.add_argument( '-a', '--abscissa', action='store_true', help="take the first series as abscissa" )
 		self.parser.add_argument( '-f', '--file', type=argparse.FileType('r'), help="read from the file FILE" )
@@ -296,7 +305,7 @@ class Tracer :
 		if self.args.columns is not None :
 			self._seriesmax = 0
 			for subplot in self.args.columns :
-				self._seriesmax = max( self._seriesmax, max( subplot ) )
+				self._seriesmax = max( self._seriesmax, max( map( abs, subplot ) ) )
 			if self.args.ncolumns is not None and self.args.ncolumns < self._seriesmax :
 				self.parser.error( "the number of columns must be at least equal to the highest selected column" )
 
@@ -742,7 +751,8 @@ class Tracer :
 				try :
 					for subplot in self._series :
 						for serie in subplot :
-							line[serie-1] = float( line[serie-1] )
+							index = serie - 1 if serie > 0 else serie
+							line[index] = float( line[index] )
 				except ValueError :
 					if not self.args.quiet :
 						sys.stdout.write( strline )
@@ -759,7 +769,8 @@ class Tracer :
 			n = 0
 			for i, subplot in enumerate( self._series ) :
 				for j, serie in enumerate( subplot ) :
-					self._data[n].append( line[serie-1] )
+					index = serie - 1 if serie > 0 else serie
+					self._data[n].append( line[index] )
 					n += 1
 			
 			self._data_count += 1
