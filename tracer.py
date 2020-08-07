@@ -60,15 +60,19 @@ class Tracer :
 					assert len( column_range ) <= 3
 
 					if len( column_range ) == 3 :
-						step = abs( int( column_range[2] ) )
+						step = int( column_range[2] )
 					else :
 						step = 1
 
 					if len( column_range ) >= 2 :
 						start = int( column_range[0] )
-						stop  = int( column_range[1] )
-						order = 1 if start <= stop else -1
-						columns[-1].extend( range( start, stop + order, order*step ) )
+						if column_range[1][0] == 'x' :
+							stop  = start + step*( abs( int( column_range[1][1:] ) ) - 1 )
+							order = 1 if step >= 0 else -1
+						else :
+							stop  = int( column_range[1] )
+							order = 1 if start <= stop else -1
+						columns[-1].extend( range( start, stop + order, order*abs( step ) ) )
 					else :
 						columns[-1].append( int( column_range[0] ) )
 
