@@ -8,7 +8,7 @@ Test rapide, dans un terminal :
 
 **Les fichiers :**
 
-tracer-qt4.py et tracer-tk.py propose respectivement une interface graphique à partir des bibliothèque Qt4 et Tkinter. Ils utilisent tous deux la classe `Tracer` définie dans tracer.py. Ce dernier fichier peut être exécuter directement, dans quel cas l'interface standard de matplotlib sera utilisée et la barre d'outils ne se verra pas agrémenté des boutons "change band/rate", "pause" et "save data". tracer-qt4.py et tracer-tk.py servent d'exemples pour la manière d'intégrer le traceur et sa barre d'outils dans n'importe quelle application.
+tracer-qt4.py et tracer-tk.py propose respectivement une interface graphique à partir des bibliothèque Qt4 et Tkinter. Ils utilisent tous deux la classe `Tracer` définie dans tracer.py. Ce dernier fichier peut être exécuté directement, dans quel cas l'interface standard de matplotlib sera utilisée et la barre d'outils ne se verra pas agrémenté des boutons "change band/rate", "pause" et "save data". tracer-qt4.py et tracer-tk.py servent d'exemples pour la manière d'intégrer le traceur et sa barre d'outils dans n'importe quelle application.
 
 
 **Le traceur en lui-même :**
@@ -55,7 +55,7 @@ Les lignes de texte sont lues en dissociant chaque mot séparé par un ou plusie
 
 `$ ./tracer.py -f file.txt -n 2 -L '$\alpha$,$\beta$' -T Résultats -P -S`
 
-*Traite les lignes du fichier file.txt comportant exactement 2 colonnes et légende la première série par la lettre grec alpha et la deuxième par la lettre grec beta. Le graphique est intitulé "Résultats", les couleurs sont claires et les marges transparentes afin que la figure soit propre à l'exportation.*
+*Traite les lignes du fichier file.txt comportant exactement 2 colonnes et légende la première série par la lettre grecque alpha et la deuxième par la lettre grecque beta. Le graphique est intitulé "Résultats", les couleurs sont claires et les marges transparentes afin que la figure soit propre à l'exportation.*
 
 `$ ./tracer.py -aC1,2 -x25 -s50x100 -p | ./tracer.py -aC3,4 -x75 -s50x100`
 
