@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# tracer-tk.py
+# tracer_tk.py
 #
 #    Copyright (C) 2014 Arthur Bouton
 #
@@ -143,7 +143,7 @@ class TkTracerWindow() :
 			return popup.accepted, popup.band_value, popup.rate_value
 
 
-if __name__ == '__main__' :
+def main() :
 
 	main_tracer = Tracer()
 	main_tracer.run( show=False )
@@ -153,3 +153,7 @@ if __name__ == '__main__' :
 	main_window = TkTracerWindow( app, main_tracer )
 
 	app.mainloop()
+
+
+if __name__ == '__main__' :
+	main()

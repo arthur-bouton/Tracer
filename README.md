@@ -1,28 +1,46 @@
-# Tracer
-Traceur de courbes basé sur matplotlib.
+# Real-time versatile plotter based on Matplotlib
 
-Test rapide, dans un terminal :
-
-`$ { while true ; do echo $((RANDOM%21-10)) $((RANDOM%21-10)) ; sleep 0.01 ; done } | ./tracer.py -C1/2 -b200`
-
-
-**Les fichiers :**
-
-tracer-qt4.py et tracer-tk.py propose respectivement une interface graphique à partir des bibliothèque Qt4 et Tkinter. Ils utilisent tous deux la classe `Tracer` définie dans tracer.py. Ce dernier fichier peut être exécuté directement, dans quel cas l'interface standard de matplotlib sera utilisée et la barre d'outils ne se verra pas agrémenté des boutons "change band/rate", "pause" et "save data". tracer-qt4.py et tracer-tk.py servent d'exemples pour la manière d'intégrer le traceur et sa barre d'outils dans n'importe quelle application.
+<p align="center">
+	<img src="screenshot.png?raw=true" width="600"
+	title="{ for i in $(seq 200) ; do echo "s( $i/8 ) ; 2*c( $i/4 ) ; scale=0 ; $i%30" | bc -l | tr '\n' ' ' ; echo ; done } | tracer-qt4 -C1,2/3">
+</p>
 
 
-**Le traceur en lui-même :**
+Traceur de courbes basé sur Matplotlib.
+
+
+### Installation :
+
+Pour une installation dans l'espace utilisateur, exécutez dans le dossier du dépôt :
+
+`$ pip install . --user`
+
+Pour la version utilisant Qt4, vous aurez également besoin d'installer PyQt4, qui n'est plus disponible sur PyPI, mais peut être installé depuis les dépôts Debian :
+
+`sudo apt-get install python3-pyqt4`
+
+Pour effectuer un test rapide, exécutez dans un terminal bash :
+
+`$ { while true ; do echo $((RANDOM%21-10)) $((RANDOM%21-10)) ; sleep 0.01 ; done } | tracer -C1/2 -b200`
+
+
+### Les fichiers :
+
+tracer_qt4.py et tracer_tk.py propose respectivement une interface graphique à partir des bibliothèque Qt4 et Tkinter. Ils utilisent tous deux la classe `Tracer` définie dans tracer.py. Ce dernier fichier peut être exécuter directement, dans quel cas l'interface standard de matplotlib sera utilisée et la barre d'outils ne se verra pas agrémenté des boutons "change band/rate", "pause" et "save data". tracer_qt4.py et tracer_tk.py servent d'exemples pour la manière d'intégrer le traceur et sa barre d'outils dans n'importe quelle application.
+
+
+### Le traceur en lui-même :
 
 Le traceur peut lire depuis un fichier texte, un tube ou un socket. Dans ces deux derniers cas, les courbes seront actualisées à une période qui peut être définie par l'option `-r, --rate` (50 ms par défaut) lorsque de nouvelles valeurs arrivent. Si le traceur est surchargé par l'arrivée des nouvelles données, il diffèrera l'actualisation des courbes afin de rester à jour. Lorsque cela arrive, la mention "OVERRUN" s'affiche en haut de la figure, au-dessus de la valeur entre crochet représentant le nombre de données affichées. À cet endroit peut aussi figurer la mention "END" lorsque le tracer a reçu une fin de fichier.
 
 Les lignes de texte sont lues en dissociant chaque mot séparé par un ou plusieurs espace(s). Chaque série à tracer doit alors coïncider avec un indice de colonne ainsi formée. Si une ligne ne présente pas de valeur numérique à l'une des colonnes devant correspondre à une série, elle sera ignorée. Par défaut les lignes ignorées sont réécrites sur la sortie standard et celles traitées sont tues. Ce comportement peut être changé à l'aide des options `-q, --quiet` et `-p, --pass`.
 
 
-**Les Principales options :**
+### Les Principales options :
 
 * La lecture depuis un fichier se fait avec l'option `-f, --file` suivit du chemin vers le fichier. Dans le cas contraire, le traceur lit depuis l'entrée standard.
 * L'option `--sep` permet de spécifier le caractère qui sépare chaque valeur sur une ligne. Par défaut, il s'agit des espaces. Pour lire un fichier CSV, il faudra donc préciser `--sep=,`.
-* L'option `-C, --columns` permet de spécifier les colonnes correspondant aux séries à tracer. Le numéro des colonnes sont à séparer par des virgules pour que les séries soient tracées sur un même graphique ou par un slash pour qu'elles soient réparties sur des graphiques superposés.
+* L'option `-C, --columns` permet de spécifier les colonnes correspondant aux séries à tracer. Le numéro des colonnes sont à séparer par des virgules pour que les séries soient tracées sur un même graphique ou par un slash pour qu'elles soient réparties sur des graphiques superposés. Un tiret entre deux numéros indique un intervalle de colonnes à prendre en compte.
 * L'option `-a, --abscissa` fait passer la première série en abscisse pour toutes les autres.
 * L'option `-b, --band` permet de définir une bande glissante de valeurs à afficher lors de la lecture sur l'entrée standard ou le nombre de données après lesquelles s'arrêter lors de la lecture à partir d'un fichier. Le deuxième cas est particulièrement utile en combinaison avec l'option `-o, --offset` pour sélectionner une plage de valeurs à tracer.
 * Les courbes peuvent être misent en forme via les options `-c, --colors`, `-d, --dashed`, `-t, --dotted`, `-m, --mixed` ou encore `-w, --linewidth`.
@@ -31,38 +49,38 @@ Les lignes de texte sont lues en dissociant chaque mot séparé par un ou plusie
 * L'ensemble des options est visible à l'aide de `-h, --help`.
 
 
-**Quelques exemples d'utilisation :**
+### Quelques exemples d'utilisation :
 
-`$ ./tracer.py`
+`$ tracer`
 
 *Lira tout ce qui vient de l'entrée standard (à utiliser alors avec un tube). La première ligne reçue comprenant au moins une valeur numérique séparée par des espaces déterminera la ou les série(s) à tracer sur un même graphique.*
 
-`$ ./tracer.py -C 2,3,5`
+`$ tracer -C 2-4,6`
 
-*Traitera les lignes où les colonnes 2, 3 et 5 sont des valeurs numériques et tracera les trois séries sur un même graphique.*
+*Traitera les lignes où les colonnes 2, 3, 4 et 6 sont des valeurs numériques et tracera les trois séries sur un même graphique.*
 
-`$ ./tracer.py -C 2,3/5`
+`$ tracer -C 2-4/6`
 
-*Tracera les séries issues des colonnes 2 et 3 sur un premier graphique et celle issue de la colonne 5 sur un autre partageant la même abscisse.*
+*Tracera les séries issues des colonnes 2 à 4 sur un premier graphique et celle issue de la colonne 6 sur un autre partageant la même abscisse.*
 
-`$ ./tracer.py -C 2,3/5 -a`
+`$ tracer -C 2,4/6 -a`
 
-*Tracera les séries issues des colonnes 3 et 5 sur deux graphiques différents mais tous deux en fonction de la première série spécifiée, c'est-à-dire ici celle issue de la deuxième colonne.*
+*Tracera les séries issues des colonnes 4 et 6 sur deux graphiques différents mais tous deux en fonction de la première série spécifiée, c'est-à-dire ici celle issue de la deuxième colonne.*
 
-`$ ./tracer.py -f file.txt -o 1000 -b 200`
+`$ tracer -f file.txt -o 1000 -b 200`
 
 *Trace la ou les série(s) de valeurs numériques contenues dans le fichier file.txt entre la 1000ème et la 1200ème donnée.*
 
-`$ ./tracer.py -f file.txt -n 2 -L '$\alpha$,$\beta$' -T Résultats -P -S`
+`$ tracer -f file.txt -n 2 -L '$\alpha$,$\beta$' -T Résultats -P -S`
 
 *Traite les lignes du fichier file.txt comportant exactement 2 colonnes et légende la première série par la lettre grecque alpha et la deuxième par la lettre grecque beta. Le graphique est intitulé "Résultats", les couleurs sont claires et les marges transparentes afin que la figure soit propre à l'exportation.*
 
-`$ ./tracer.py -aC1,2 -x25 -s50x100 -p | ./tracer.py -aC3,4 -x75 -s50x100`
+`$ tracer -aC1,2 -x25 -s50x100 -p | tracer -aC3,4 -x75 -s50x100`
 
 *Tracera dans une première fenêtre occupant la moitiée gauche de l'écran la série issue de la deuxième colonne en fonction de celle issue de la première colonne et dans une seconde fenêtre occupant la moitiée droite de l'écran la série issue de la quatrième colonne en fonction de celle issue de la troisième colonne.*
 
 
-**La barre d'outils :**
+### La barre d'outils :
 
 La barre d'outils custom dispose, en plus des boutons de l'interface standard de matplotlib, de trois boutons supplémentaires lorsque le traceur lit depuis un tube ou un socket :
 * Un bouton "change band/rate" pour changer le nombre de données maximum à afficher ou la période d'affichage. Double-cliquer sur ce bouton ouvre une fenêtre permettant de renseigner directement la valeur désirée pour chacun d'eux. Sinon leur valeur peut être changée en cliquant-glissant de haut en bas dans un graphique, respectivement avec le bouton gauche ou avec le bouton droit de la souris. Le raccourci clavier associé est `b`.

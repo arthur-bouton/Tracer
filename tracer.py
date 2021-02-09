@@ -51,14 +51,33 @@ class Tracer :
 
 	def _columns( self, arg ) :
 		try :
-			columns = arg.split( '/' )
-			for i, subplot in enumerate( columns ) :
-				columns[i] = subplot.split( ',' )
-				for j, column in enumerate( columns[i] ) :
-					columns[i][j] = int( column )
-					assert columns[i][j] > 0
+			columns = []
+			for subplot in arg.split( '/' ) :
+				columns.append( [] )
+				for column in subplot.split( ',' ) :
+					column_range = column.split( ':' )
+
+					assert len( column_range ) <= 3
+
+					if len( column_range ) == 3 :
+						step = int( column_range[2] )
+					else :
+						step = 1
+
+					if len( column_range ) >= 2 :
+						start = int( column_range[0] )
+						if column_range[1][0] == 'x' :
+							stop  = start + step*( abs( int( column_range[1][1:] ) ) - 1 )
+							order = 1 if step >= 0 else -1
+						else :
+							stop  = int( column_range[1] )
+							order = 1 if start <= stop else -1
+						columns[-1].extend( range( start, stop + order, order*abs( step ) ) )
+					else :
+						columns[-1].append( int( column_range[0] ) )
+
 		except :
-			raise argparse.ArgumentTypeError( "invalid columns list: '%s': must be integers separeted by commas or slashes" % arg )
+			raise argparse.ArgumentTypeError( "invalid columns list: '%s': must be integers separeted by commas, slashes or colons to indicate a range" % arg )
 		return columns
 
 
@@ -162,10 +181,10 @@ class Tracer :
 
 		self.parser = argparse.ArgumentParser()
 		self.parser.add_argument( '--sep', type=str, help="set the delimiter string" )
-		self.parser.add_argument( '-C', '--columns', type=self._columns, help="specify the columns to be processed, separated by commas and the subplots by slashes" )
-		self.parser.add_argument( '-n', '--ncolumns', type=self._s_positive_int, help="process only the lines with NCOLUMNS columns" )
+		self.parser.add_argument( '-C', '--columns', type=self._columns, help="specify the columns to be processed, separated by commas (a colon indicates a range and an extra colon specifies a step) while subplots are separated by slashes" )
+		self.parser.add_argument( '-n', '--ncolumns', type=self._s_positive_int, help="process only the lines with N columns" )
 		self.parser.add_argument( '-a', '--abscissa', action='store_true', help="take the first series as abscissa" )
-		self.parser.add_argument( '-f', '--file', type=argparse.FileType('r+b'), help="read from the file FILE" )
+		self.parser.add_argument( '-f', '--file', type=argparse.FileType('r'), help="read from the file FILE" )
 		self.parser.add_argument( '-o', '--offset', type=self._s_positive_int, help="add a starting offset" )
 		self.parser.add_argument( '-b', '--band', type=self._s_positive_int, help="limit the number of data to display" )
 		self.parser.add_argument( '-r', '--rate', type=float, default=rate, help="set a minimum time in seconds between two updates of the window" )
@@ -290,7 +309,7 @@ class Tracer :
 		if self.args.columns is not None :
 			self._seriesmax = 0
 			for subplot in self.args.columns :
-				self._seriesmax = max( self._seriesmax, max( subplot ) )
+				self._seriesmax = max( self._seriesmax, max( map( abs, subplot ) ) )
 			if self.args.ncolumns is not None and self.args.ncolumns < self._seriesmax :
 				self.parser.error( "the number of columns must be at least equal to the highest selected column" )
 
@@ -736,7 +755,8 @@ class Tracer :
 				try :
 					for subplot in self._series :
 						for serie in subplot :
-							line[serie-1] = float( line[serie-1] )
+							index = serie - 1 if serie > 0 else serie
+							line[index] = float( line[index] )
 				except ValueError :
 					if not self.args.quiet :
 						sys.stdout.write( strline )
@@ -753,7 +773,8 @@ class Tracer :
 			n = 0
 			for i, subplot in enumerate( self._series ) :
 				for j, serie in enumerate( subplot ) :
-					self._data[n].append( line[serie-1] )
+					index = serie - 1 if serie > 0 else serie
+					self._data[n].append( line[index] )
 					n += 1
 			
 			self._data_count += 1
@@ -1147,6 +1168,8 @@ def import_TracerToolbar( NavigationToolbar2 ) :
 	return TracerToolbar
 
 
-if __name__ == '__main__' :
-
+def main() :
 	sys.exit( Tracer().run() )
+
+if __name__ == '__main__' :
+	main()
