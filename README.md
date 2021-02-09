@@ -73,7 +73,7 @@ Les lignes de texte sont lues en dissociant chaque mot séparé par un ou plusie
 
 `$ tracer -f file.txt -n 2 -L '$\alpha$,$\beta$' -T Résultats -P -S`
 
-*Traite les lignes du fichier file.txt comportant exactement 2 colonnes et légende la première série par la lettre grec alpha et la deuxième par la lettre grec beta. Le graphique est intitulé "Résultats", les couleurs sont claires et les marges transparentes afin que la figure soit propre à l'exportation.*
+*Traite les lignes du fichier file.txt comportant exactement 2 colonnes et légende la première série par la lettre grecque alpha et la deuxième par la lettre grecque beta. Le graphique est intitulé "Résultats", les couleurs sont claires et les marges transparentes afin que la figure soit propre à l'exportation.*
 
 `$ tracer -aC1,2 -x25 -s50x100 -p | tracer -aC3,4 -x75 -s50x100`
 
